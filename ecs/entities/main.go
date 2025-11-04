@@ -5,9 +5,13 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	Empty []Entity = []Entity{}
+)
+
 type Entity struct {
 	Id         uuid.UUID
-	Components []ecs.Component
+	Components map[int]ecs.Component
 }
 
 func (Entity) Entity() {}
