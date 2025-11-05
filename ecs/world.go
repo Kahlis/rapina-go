@@ -2,33 +2,34 @@ package ecs
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
+	"strconv"
 	"time"
 )
 
 type World struct {
-	DeltaTime    time.Duration
-	FrameTime    time.Time
-	CurrentFrame uint32
-	FrameRate    uint8
-	Entities     []Entity
-	Systems      []System
+	FrameSnapshot [60]float64
+	DeltaTime     time.Duration
+	FrameTime     time.Time
+	CurrentFrame  uint32
+	FrameRate     uint32
+	Entities      []Entity
+	Systems       []System
 }
 
-func NewWorld(tps uint8, entities []Entity, systems []System) *World {
+func NewWorld(tps uint32, entities []Entity, systems []System) *World {
 	w := &World{}
 	return w.Create(tps, entities, systems)
 }
 
-func (w World) Create(frameRate uint8, entities []Entity, systems []System) *World {
+func (w World) Create(frameRate uint32, entities []Entity, systems []System) *World {
 	return &World{
-		DeltaTime:    0,
-		FrameTime:    time.Now(),
-		CurrentFrame: 0,
-		FrameRate:    frameRate,
-		Entities:     entities,
-		Systems:      systems,
+		FrameSnapshot: [60]float64{},
+		DeltaTime:     0.0,
+		FrameTime:     time.Now(),
+		CurrentFrame:  0,
+		FrameRate:     frameRate,
+		Entities:      entities,
+		Systems:       systems,
 	}
 }
 
@@ -41,12 +42,32 @@ func (w *World) Run() {
 
 	w.CurrentFrame++
 	w.FrameTime = time.Now()
+	w.FrameSnapshot[w.CurrentFrame%w.FrameRate] = 1 / w.DeltaTime.Seconds()
 
-	cmd := exec.Command("clear")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	if w.CurrentFrame%w.FrameRate == 0 {
+		fps := 0.0
+		for i := range w.FrameSnapshot {
+			fps += w.FrameSnapshot[i]
+		}
+		fps /= float64(w.FrameRate)
 
-	fmt.Printf("FrameRate is %f\n", 1/w.DeltaTime.Seconds())
+		fpsTest := fmt.Sprintf("%.f", fps)
+
+		if fpsTest != "60" {
+			frame, _ := strconv.Atoi(fpsTest)
+			fmt.Printf("FrameGap: %d (%d)\n", frame, frame-60)
+		}
+	}
+
+	frameDiff := (float64(w.FrameRate) - (1 / w.DeltaTime.Seconds())) * 4
+	frameWait := time.Second / time.Duration(w.FrameRate)
+	frameSkip := time.Duration(float64(frameWait) * (1 - frameDiff/100))
+
+	if frameDiff > 0 {
+		time.Sleep(frameSkip)
+	} else {
+		time.Sleep(frameWait)
+	}
 }
 
 func (w *World) Exit() {}
