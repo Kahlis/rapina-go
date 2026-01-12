@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/Kahlis/rapina-go/ecs/entity"
+	"github.com/Kahlis/rapina-go/ecs/system"
 )
 
 type World struct {
@@ -12,16 +15,16 @@ type World struct {
 	FrameTime     time.Time
 	CurrentFrame  uint32
 	FrameRate     uint32
-	Entities      []Entity
-	Systems       []System
+	Entities      []entity.Entity
+	Systems       []system.ISystem
 }
 
-func NewWorld(tps uint32, entities []Entity, systems []System) *World {
+func NewWorld(tps uint32, entities []entity.Entity, systems []system.ISystem) *World {
 	w := &World{}
 	return w.Create(tps, entities, systems)
 }
 
-func (w World) Create(frameRate uint32, entities []Entity, systems []System) *World {
+func (w World) Create(frameRate uint32, entities []entity.Entity, systems []system.ISystem) *World {
 	return &World{
 		FrameSnapshot: [60]float64{},
 		DeltaTime:     0.0,
@@ -35,7 +38,7 @@ func (w World) Create(frameRate uint32, entities []Entity, systems []System) *Wo
 
 func (w *World) Run() {
 	for i := range w.Systems {
-		w.Systems[i].Run(w.CurrentFrame)
+		w.Systems[i].Run(w.CurrentFrame, w.Entities)
 	}
 
 	w.DeltaTime = time.Since(w.FrameTime)
@@ -45,7 +48,7 @@ func (w *World) Run() {
 	w.FrameSnapshot[w.CurrentFrame%w.FrameRate] = 1 / w.DeltaTime.Seconds()
 }
 
-func (w *World) FPS(desiredFrames int) {
+func (w *World) FPS() {
 	if w.CurrentFrame%w.FrameRate == 0 {
 		fps := 0.0
 		for i := range w.FrameSnapshot {
@@ -55,9 +58,9 @@ func (w *World) FPS(desiredFrames int) {
 
 		fpsTest := fmt.Sprintf("%.f", fps)
 
-		if fpsTest != strconv.Itoa(desiredFrames) {
+		if fpsTest != fmt.Sprint(w.FrameRate) {
 			frame, _ := strconv.Atoi(fpsTest)
-			fmt.Printf("FrameGap: %d (%d)\n", frame, frame-desiredFrames)
+			fmt.Printf("FrameGap: %d (%d)\n", frame, frame-int(w.FrameRate))
 		}
 	}
 }
@@ -77,10 +80,10 @@ func (w *World) WaitFrame() {
 
 func (w *World) Exit() {}
 
-func (w *World) AddEntity(e Entity) {
+func (w *World) AddEntity(e entity.Entity) {
 	w.Entities = append(w.Entities, e)
 }
 
-func (w *World) AddSystem(s System) {
+func (w *World) AddSystem(s system.ISystem) {
 	w.Systems = append(w.Systems, s)
 }

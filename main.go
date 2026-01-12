@@ -1,7 +1,12 @@
 package main
 
 import (
+	"github.com/Kahlis/rapina-go/ecs"
+	"github.com/Kahlis/rapina-go/ecs/component"
+	"github.com/Kahlis/rapina-go/ecs/entity"
+	"github.com/Kahlis/rapina-go/ecs/system"
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/google/uuid"
 )
 
 /*
@@ -21,6 +26,20 @@ func main() {
 */
 
 func main() {
+	cubeTransform := &component.Empty
+	cubeEntity := entity.Entity{
+		Id:         uuid.New(),
+		Components: map[int]component.IComponent{0: cubeTransform},
+	}
+
+	moverSystem := system.Mover{}
+
+	world := ecs.NewWorld(
+		60,
+		[]entity.Entity{cubeEntity},
+		[]system.ISystem{moverSystem},
+	)
+
 	rl.InitWindow(800, 450, "Rapina Engine [core] example - 3d camera free")
 
 	camera := rl.Camera3D{}
@@ -30,7 +49,7 @@ func main() {
 	camera.Fovy = 45.0
 	camera.Projection = rl.CameraPerspective
 
-	cubePosition := rl.NewVector3(0.0, 0.0, 0.0)
+	// cubePosition := rl.NewVector3(cubeTransform.Position.X, 0.0, 0.0)
 
 	rl.SetTargetFPS(60)
 
@@ -41,14 +60,16 @@ func main() {
 			camera.Target = rl.NewVector3(0.0, 0.0, 0.0)
 		}
 
+		world.Run()
+
 		rl.BeginDrawing()
 
 		rl.ClearBackground(rl.RayWhite)
 
 		rl.BeginMode3D(camera)
 
-		rl.DrawCube(cubePosition, 2.0, 2.0, 2.0, rl.Red)
-		rl.DrawCubeWires(cubePosition, 2.0, 2.0, 2.0, rl.Maroon)
+		rl.DrawCube(cubeTransform.RlPosition(), 2.0, 2.0, 2.0, rl.Red)
+		rl.DrawCubeWires(cubeTransform.RlPosition(), 2.0, 2.0, 2.0, rl.Maroon)
 
 		rl.DrawGrid(10, 1.0)
 
