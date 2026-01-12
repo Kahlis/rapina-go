@@ -43,7 +43,9 @@ func (w *World) Run() {
 	w.CurrentFrame++
 	w.FrameTime = time.Now()
 	w.FrameSnapshot[w.CurrentFrame%w.FrameRate] = 1 / w.DeltaTime.Seconds()
+}
 
+func (w *World) FPS(desiredFrames int) {
 	if w.CurrentFrame%w.FrameRate == 0 {
 		fps := 0.0
 		for i := range w.FrameSnapshot {
@@ -53,14 +55,17 @@ func (w *World) Run() {
 
 		fpsTest := fmt.Sprintf("%.f", fps)
 
-		if fpsTest != "60" {
+		if fpsTest != strconv.Itoa(desiredFrames) {
 			frame, _ := strconv.Atoi(fpsTest)
-			fmt.Printf("FrameGap: %d (%d)\n", frame, frame-60)
+			fmt.Printf("FrameGap: %d (%d)\n", frame, frame-desiredFrames)
 		}
 	}
+}
 
+func (w *World) WaitFrame() {
 	frameDiff := (float64(w.FrameRate) - (1 / w.DeltaTime.Seconds())) * 4
 	frameWait := time.Second / time.Duration(w.FrameRate)
+
 	frameSkip := time.Duration(float64(frameWait) * (1 - frameDiff/100))
 
 	if frameDiff > 0 {

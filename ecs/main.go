@@ -9,7 +9,7 @@ type Entity interface {
 }
 
 type System interface {
-	Start()
+	Init()
 	Run(uint32)
 	Exit()
 }
