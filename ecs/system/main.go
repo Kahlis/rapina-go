@@ -1,4 +1,4 @@
-package systems
+package system
 
 import "github.com/google/uuid"
 

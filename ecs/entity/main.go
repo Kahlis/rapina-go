@@ -1,4 +1,4 @@
-package entities
+package entity
 
 import (
 	"github.com/Kahlis/rapina-go/ecs"

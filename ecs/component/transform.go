@@ -1,4 +1,4 @@
-package components
+package component
 
 import "github.com/Kahlis/rapina-go/structure/math"
 
