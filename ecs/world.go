@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kahlis/rapina-go/ecs/entity"
 	"github.com/Kahlis/rapina-go/ecs/system"
+	"github.com/Kahlis/rapina-go/structure/input"
 )
 
 type World struct {
@@ -17,14 +18,15 @@ type World struct {
 	FrameRate     uint32
 	Entities      []entity.Entity
 	Systems       []system.ISystem
+	Input         input.Keys
 }
 
-func NewWorld(tps uint32, entities []entity.Entity, systems []system.ISystem) *World {
+func NewWorld(tps uint32, entities []entity.Entity, systems []system.ISystem, input input.Keys) *World {
 	w := &World{}
-	return w.Create(tps, entities, systems)
+	return w.Create(tps, entities, systems, input)
 }
 
-func (w World) Create(frameRate uint32, entities []entity.Entity, systems []system.ISystem) *World {
+func (w World) Create(frameRate uint32, entities []entity.Entity, systems []system.ISystem, input input.Keys) *World {
 	return &World{
 		FrameSnapshot: [60]float64{},
 		DeltaTime:     0.0,
@@ -33,10 +35,13 @@ func (w World) Create(frameRate uint32, entities []entity.Entity, systems []syst
 		FrameRate:     frameRate,
 		Entities:      entities,
 		Systems:       systems,
+		Input:         input,
 	}
 }
 
 func (w *World) Run() {
+	w.Input.Update()
+
 	for i := range w.Systems {
 		w.Systems[i].Run(w.CurrentFrame, w.Entities)
 	}

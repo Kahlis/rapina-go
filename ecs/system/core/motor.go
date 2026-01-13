@@ -1,22 +1,20 @@
-package system
+package core
 
 import (
 	"fmt"
 	"math"
 
-	"github.com/Kahlis/rapina-go/ecs/component"
+	"github.com/Kahlis/rapina-go/ecs/component/position"
 	"github.com/Kahlis/rapina-go/ecs/entity"
 )
 
-type Mover struct {
-	System
-}
+type Motor struct{}
 
-func (c Mover) Init() {
+func (c Motor) Init() {
 	fmt.Println("Cube Mover initialized!")
 }
 
-func (c Mover) Run(frame uint32, entities []entity.Entity) {
+func (c Motor) Run(frame uint32, entities []entity.Entity) {
 	if len(entities) == 0 {
 		return
 	}
@@ -26,12 +24,12 @@ func (c Mover) Run(frame uint32, entities []entity.Entity) {
 	}
 
 	cp := entities[0].Components[0]
-	if transform, ok := cp.(*component.Transform); ok {
+	if position, ok := cp.(*position.Position); ok {
 		time := float64(frame) / (60.0 / 4) // 4 cycles per second at 60 fps
-		transform.Position.X = float32(math.Cos(time) * 2)
+		position.X = float32(math.Cos(time) * 2)
 	}
 }
 
-func (c Mover) Exit() {
+func (c Motor) Exit() {
 	fmt.Println("Cube Translator destroyed!")
 }
