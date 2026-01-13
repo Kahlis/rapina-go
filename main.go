@@ -47,11 +47,14 @@ func main() {
 		Components: map[int]component.IComponent{0: cubePosition},
 	}
 
-	moverSystem := core.Motor{}
+	worldEntities := make(map[uuid.UUID]entity.Entity)
+	worldEntities[cubeEntity.Id] = cubeEntity
+
+	moverSystem := core.Motor{Input: input, Entities: worldEntities, Target: cubeEntity.Id}
 
 	world := ecs.NewWorld(
 		60,
-		[]entity.Entity{cubeEntity},
+		worldEntities,
 		[]system.ISystem{moverSystem},
 		input,
 	)

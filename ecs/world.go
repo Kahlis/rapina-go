@@ -8,6 +8,7 @@ import (
 	"github.com/Kahlis/rapina-go/ecs/entity"
 	"github.com/Kahlis/rapina-go/ecs/system"
 	"github.com/Kahlis/rapina-go/structure/input"
+	"github.com/google/uuid"
 )
 
 type World struct {
@@ -16,17 +17,17 @@ type World struct {
 	FrameTime     time.Time
 	CurrentFrame  uint32
 	FrameRate     uint32
-	Entities      []entity.Entity
+	Entities      map[uuid.UUID]entity.Entity
 	Systems       []system.ISystem
 	Input         input.Keys
 }
 
-func NewWorld(tps uint32, entities []entity.Entity, systems []system.ISystem, input input.Keys) *World {
+func NewWorld(tps uint32, entities map[uuid.UUID]entity.Entity, systems []system.ISystem, input input.Keys) *World {
 	w := &World{}
 	return w.Create(tps, entities, systems, input)
 }
 
-func (w World) Create(frameRate uint32, entities []entity.Entity, systems []system.ISystem, input input.Keys) *World {
+func (w World) Create(frameRate uint32, entities map[uuid.UUID]entity.Entity, systems []system.ISystem, input input.Keys) *World {
 	return &World{
 		FrameSnapshot: [60]float64{},
 		DeltaTime:     0.0,
@@ -43,7 +44,7 @@ func (w *World) Run() {
 	w.Input.Update()
 
 	for i := range w.Systems {
-		w.Systems[i].Run(w.CurrentFrame, w.Entities)
+		w.Systems[i].Run(w.CurrentFrame, w.DeltaTime)
 	}
 
 	w.DeltaTime = time.Since(w.FrameTime)
@@ -86,7 +87,7 @@ func (w *World) WaitFrame() {
 func (w *World) Exit() {}
 
 func (w *World) AddEntity(e entity.Entity) {
-	w.Entities = append(w.Entities, e)
+	// w.Entities = append(w.Entities, e)
 }
 
 func (w *World) AddSystem(s system.ISystem) {

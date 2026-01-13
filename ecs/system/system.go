@@ -1,7 +1,8 @@
 package system
 
 import (
-	"github.com/Kahlis/rapina-go/ecs/entity"
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -11,7 +12,7 @@ var (
 
 type ISystem interface {
 	Init()
-	Run(uint32, []entity.Entity)
+	Run(uint32, time.Duration)
 	Exit()
 }
 
