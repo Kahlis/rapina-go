@@ -69,6 +69,7 @@ func main() {
 
 	rl.SetTargetFPS(60)
 	toggle := true
+	disabled := ""
 
 	for !rl.WindowShouldClose() {
 		if rl.IsMouseButtonDown(rl.MouseRightButton) {
@@ -86,9 +87,11 @@ func main() {
 			if toggle {
 				input.Delete(rl.KeyLeft)
 				toggle = false
+				disabled = " (Disabled)"
 			} else {
 				input.Set(rl.KeyLeft)
 				toggle = true
+				disabled = ""
 			}
 		}
 
@@ -111,10 +114,10 @@ func main() {
 		rl.DrawRectangleLines(10, 10, 320, 133, rl.Blue)
 
 		rl.DrawText("Input Test:", 20, 20, 10, rl.Black)
-		rl.DrawText(fmt.Sprintf("LeftArrow: %t", input.List[rl.KeyLeft].Down), 40, 40, 10, rl.DarkGray)
-		rl.DrawText(fmt.Sprintf("RightArrow: %t", input.List[rl.KeyRight].Down), 40, 60, 10, rl.DarkGray)
-		rl.DrawText(fmt.Sprintf("UpArrow: %t", input.List[rl.KeyUp].Down), 40, 80, 10, rl.DarkGray)
-		rl.DrawText(fmt.Sprintf("DownArrow: %t", input.List[rl.KeyDown].Down), 40, 100, 10, rl.DarkGray)
+		rl.DrawText(fmt.Sprintf("LeftArrow%s: %t", disabled, input.GetKey(rl.KeyLeft).Down), 40, 40, 10, rl.DarkGray)
+		rl.DrawText(fmt.Sprintf("RightArrow: %t", input.GetKey(rl.KeyRight).Down), 40, 60, 10, rl.DarkGray)
+		rl.DrawText(fmt.Sprintf("UpArrow: %t", input.GetKey(rl.KeyUp).Down), 40, 80, 10, rl.DarkGray)
+		rl.DrawText(fmt.Sprintf("DownArrow: %t", input.GetKey(rl.KeyDown).Down), 40, 100, 10, rl.DarkGray)
 
 		rl.EndDrawing()
 	}

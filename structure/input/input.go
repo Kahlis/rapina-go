@@ -47,3 +47,7 @@ func (k *Keys) Update() {
 		}
 	}
 }
+
+func (k *Keys) GetKey(rlKey int32) KeyInterest {
+	return k.List[rlKey]
+}
