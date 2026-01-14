@@ -33,7 +33,7 @@ func main() {
 func main() {
 	cubePosition := &position.Zero
 	keys := make(map[int32]input.KeyInterest)
-	input := input.Keys{List: keys}
+	input := input.InputContext{List: keys}
 
 	input.BulkSet([]int32{
 		rl.KeyLeft,

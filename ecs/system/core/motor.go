@@ -12,7 +12,7 @@ import (
 )
 
 type Motor struct {
-	Input    input.Keys
+	Input    input.InputContext
 	Entities map[uuid.UUID]entity.Entity
 	Target   uuid.UUID
 }

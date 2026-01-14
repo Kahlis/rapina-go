@@ -9,11 +9,11 @@ type KeyInterest struct {
 	Up       bool
 }
 
-type Keys struct {
+type InputContext struct {
 	List map[int32]KeyInterest
 }
 
-func (k *Keys) Set(rlKey int32) {
+func (k *InputContext) Set(rlKey int32) {
 	k.List[rlKey] = KeyInterest{
 		Pressed:  rl.IsKeyPressed(rlKey),
 		Released: rl.IsKeyReleased(rlKey),
@@ -22,7 +22,7 @@ func (k *Keys) Set(rlKey int32) {
 	}
 }
 
-func (k *Keys) BulkSet(rlKeys []int32) {
+func (k *InputContext) BulkSet(rlKeys []int32) {
 	for _, rlKey := range rlKeys {
 		k.List[rlKey] = KeyInterest{
 			Pressed:  rl.IsKeyPressed(rlKey),
@@ -33,11 +33,11 @@ func (k *Keys) BulkSet(rlKeys []int32) {
 	}
 }
 
-func (k *Keys) Delete(rlKey int32) {
+func (k *InputContext) Delete(rlKey int32) {
 	delete(k.List, rlKey)
 }
 
-func (k *Keys) Update() {
+func (k *InputContext) Update() {
 	for key := range k.List {
 		k.List[key] = KeyInterest{
 			Pressed:  rl.IsKeyPressed(key),
@@ -48,6 +48,6 @@ func (k *Keys) Update() {
 	}
 }
 
-func (k *Keys) GetKey(rlKey int32) KeyInterest {
+func (k *InputContext) GetKey(rlKey int32) KeyInterest {
 	return k.List[rlKey]
 }

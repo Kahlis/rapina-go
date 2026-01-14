@@ -19,15 +19,15 @@ type World struct {
 	FrameRate     uint32
 	Entities      map[uuid.UUID]entity.Entity
 	Systems       []system.ISystem
-	Input         input.Keys
+	Input         input.InputContext
 }
 
-func NewWorld(tps uint32, entities map[uuid.UUID]entity.Entity, systems []system.ISystem, input input.Keys) *World {
+func NewWorld(tps uint32, entities map[uuid.UUID]entity.Entity, systems []system.ISystem, input input.InputContext) *World {
 	w := &World{}
 	return w.Create(tps, entities, systems, input)
 }
 
-func (w World) Create(frameRate uint32, entities map[uuid.UUID]entity.Entity, systems []system.ISystem, input input.Keys) *World {
+func (w World) Create(frameRate uint32, entities map[uuid.UUID]entity.Entity, systems []system.ISystem, input input.InputContext) *World {
 	return &World{
 		FrameSnapshot: [60]float64{},
 		DeltaTime:     0.0,
