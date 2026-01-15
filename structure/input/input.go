@@ -14,7 +14,7 @@ type InputContext struct {
 }
 
 // Set a new Key entry for input context
-func (k *InputContext) Set(rlKey int32) {
+func (k *InputContext) Enable(rlKey int32) {
 	k.List[rlKey] = Key{
 		Pressed:  rl.IsKeyPressed(rlKey),
 		Released: rl.IsKeyReleased(rlKey),
@@ -24,7 +24,7 @@ func (k *InputContext) Set(rlKey int32) {
 }
 
 // Set a list of rlKeys as Key into InputContext
-func (k *InputContext) BulkSet(rlKeys []int32) {
+func (k *InputContext) BulkEnable(rlKeys []int32) {
 	for _, rlKey := range rlKeys {
 		k.List[rlKey] = Key{
 			Pressed:  rl.IsKeyPressed(rlKey),
@@ -36,7 +36,7 @@ func (k *InputContext) BulkSet(rlKeys []int32) {
 }
 
 // Remove a Key from InputContext by rlKey
-func (k *InputContext) Delete(rlKey int32) {
+func (k *InputContext) Disable(rlKey int32) {
 	delete(k.List, rlKey)
 }
 

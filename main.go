@@ -35,7 +35,7 @@ func main() {
 	keys := make(map[int32]input.Key)
 	input := input.InputContext{List: keys}
 
-	input.BulkSet([]int32{
+	input.BulkEnable([]int32{
 		rl.KeyLeft,
 		rl.KeyRight,
 		rl.KeyUp,
@@ -88,11 +88,11 @@ func main() {
 
 		if rl.IsKeyPressed(rl.KeySpace) {
 			if toggle {
-				input.Delete(rl.KeyLeft)
+				input.Enable(rl.KeyLeft)
 				toggle = false
 				disabled = " (Disabled)"
 			} else {
-				input.Set(rl.KeyLeft)
+				input.Disable(rl.KeyLeft)
 				toggle = true
 				disabled = ""
 			}
